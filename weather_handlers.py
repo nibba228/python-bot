@@ -13,13 +13,21 @@ async def get_weather_by_city(message: types.Message):
         'Пожалуйста, после /weather введите город или просто скиньте геолокацию')
     else:
         city = city[1]
-        await message.answer(get_weather(city=city), parse_mode='HTML')
+        msg = get_weather(city=city)
+        if msg:
+            await message.answer(msg, parse_mode='HTML')
+        else:
+            await message.answer('К сожалению, информация о погоде в этом месте не найдена')
 
 @dp.message_handler(content_types=['location'])
 async def get_weather_by_location(message: types.Message):
     lat = message.location.latitude
     lon = message.location.longitude
-    await message.answer(get_weather(lat=lat, lon=lon), parse_mode='HTML')
+    msg = get_weather(lat=lat, lon=lon)
+    if msg:
+        await message.answer(msg, parse_mode='HTML')
+    else:
+        await message.answer('К сожалению, информация о погоде в этом месте не найдена')
 
 def register_weather_handlers(dp: Dispatcher):
     dp.register_message_handler(get_weather_by_city)
